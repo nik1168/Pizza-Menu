@@ -1,5 +1,7 @@
 'use strict';
 const Pizza = require('./pizza.model').pizza;
+const Topping = require('../topping/topping.model').topping;
+const PizzaTopping = require('../pizza_topping/pizza_topping.model').pizzaTopping;
 
 
 /**
@@ -28,8 +30,20 @@ module.exports.create = function (req, res) {
  * @param res
  */
 module.exports.getAll = function (req, res) {
-    const pizza = Pizza.build();
-    pizza.retrieveAll(function (pizzas) {
+    Pizza.findAll({
+        include: [{
+            model: Topping,
+            as: 'toppings',
+            required: false,
+            // Pass in the Product attributes that you want to retrieve
+            attributes: ['name'],
+            through: {
+                model: PizzaTopping,
+                as: 'toppings',
+                attributes: ['name'],
+            }
+        }]
+    }).then((pizzas) => {
         if (pizzas) {
             res.json({
                 message: "success",
@@ -38,9 +52,8 @@ module.exports.getAll = function (req, res) {
         } else {
             res.status(404).send("No pizzas were found");
         }
-    }, function (error) {
-        console.log("Error get pizzas");
-        console.log(error);
+
+    }).catch((error) => {
         res.status(500).send("Error getting pizzas");
     });
 };

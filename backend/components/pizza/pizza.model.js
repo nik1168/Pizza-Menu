@@ -2,6 +2,7 @@
 const DataTypes = require('sequelize');
 const sequelize = require('../../config/sequelize').db;
 const Topping = require('../topping/topping.model').topping;
+const PizzaTopping = require('../pizza_topping/pizza_topping.model').pizzaTopping;
 const Pizza = sequelize.define('pizza', {
     id: {
         type: DataTypes.INTEGER,
@@ -35,21 +36,6 @@ const Pizza = sequelize.define('pizza', {
     }
 });
 
-Pizza.associate = (models) => {
-    Pizza.belongsToMany(models.Topping, {
-        through: 'pizzaTopping',
-        as: 'toppings',
-        foreignKey: 'pizza_id'
-    });
-};
-// Pizza.belongsToMany(Topping, { through: PizzaTopping });
-
-// Pizza.belongsToMany(Topping, {
-//     through: 'pizzaTopping',
-//     as: 'toppings',
-//     foreignKey: 'pizza_id'
-// });
-
 
 /**
  * Builds a pizza
@@ -62,7 +48,20 @@ const buildPizza = (self) => {
     }
 };
 
+Pizza.belongsToMany(Topping, {
+    through: PizzaTopping,
+    as: 'toppings',
+    foreignKey: 'pizza_id',
+    onDelete: 'CASCADE',
+    otherKey: 'topping_id'
+});
+Topping.belongsToMany(Pizza, {
+    through: PizzaTopping,
+    as: 'pizzas',
+    foreignKey: 'topping_id',
+    onDelete: 'CASCADE',
+    otherKey: 'pizza_id'
+});
 
-// Pizza.belongsTo(Topping,{foreignKey:''});
 
 module.exports.pizza = Pizza;
