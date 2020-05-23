@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 const config = require('../config');
+
 module.exports.middleware = function (req, res, next) {
+
     // check header or url parameters or post parameters for token
     const token = req.body.token || req.query.token || req.headers['x-access-token'];
     const apikey = req.body.api_key || req.query.api_key || req.headers['x-api-key'] || req.headers['api_key'];
@@ -23,8 +25,6 @@ module.exports.middleware = function (req, res, next) {
         if (apikey && apikey === 'root') {
             next();
         } else {
-            // if there is no token
-            // return an error
             return res.status(403).send({
                 success: false,
                 message: 'No token nor api-key provided.'

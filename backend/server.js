@@ -14,6 +14,7 @@ const tokenMiddleware = require('./middlewares/token.middleware');
 // routes
 const indexRouter = require('./routes/index');
 const pizzaRoute = require('./components/pizza/pizza.route');
+const toppingRoute = require('./components/topping/topping.route');
 
 const app = express();
 
@@ -40,6 +41,8 @@ app.get('/swagger.json', function (req, res) {
 app.use('/', indexRouter);
 app.use(tokenMiddleware.middleware);
 app.use('/pizza', pizzaRoute);
+app.use('/topping', toppingRoute);
 
 
 module.exports = app;
+

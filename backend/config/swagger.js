@@ -25,6 +25,7 @@ module.exports = function () {
         // path to the API docs
         apis: [
             'backend/components/pizza/pizza.route.js',
+            'backend/components/topping/topping.route.js',
         ]
     };
 
