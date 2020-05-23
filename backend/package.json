@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node ./bin/www",
-    "test": "IP=0.0.0.0 PORT=3030 mocha --timeout 5000 tests/*.test.js"
+    "test": "IP=0.0.0.0 PORT=3030 mocha --timeout 5000 tests/*.test.js",
+    "cleanData": "mysql -uroot -pcontrol123! < database/create_mysql.sql && mysql -uroot -pcontrol123! < database/populate_mysql.sql"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -24,6 +25,8 @@
     "rand-token": "^0.3.0",
     "sequelize": "^3.28.0",
     "swagger-jsdoc": "^1.9.7",
-    "swagger-node-express": "^2.1.3"
+    "swagger-node-express": "^2.1.3",
+    "mysql": "^2.12.0",
+    "mysql2": "^1.1.2"
   }
 }

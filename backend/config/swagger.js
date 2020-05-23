@@ -23,7 +23,9 @@ module.exports = function () {
         // import swaggerDefinitions
         swaggerDefinition: swaggerDefinition,
         // path to the API docs
-        apis: []
+        apis: [
+            'backend/components/pizza/pizza.route.js',
+        ]
     };
 
     const docs = swaggerJSDoc(options);

@@ -1,3 +1,4 @@
+'use strict';
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -11,6 +12,7 @@ const swaggerSpec = docs();
 
 // routes
 const indexRouter = require('./routes/index');
+const pizzaRoute = require('./components/pizza/pizza.route');
 
 const app = express();
 
@@ -33,6 +35,7 @@ app.get('/swagger.json', function (req, res) {
 
 //API
 app.use('/', indexRouter);
+app.use('/pizza', pizzaRoute);
 
 
 module.exports = app;
