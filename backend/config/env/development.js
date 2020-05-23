@@ -1,4 +1,5 @@
 module.exports = {
+    'secret' : 'pizza',
     'driver': 'mysql',
     'host': process.env.MYSQL_SERVICE_HOST || 'localhost',
     'mysqlPort': process.env.MYSQL_SERVICE_PORT || 3306,

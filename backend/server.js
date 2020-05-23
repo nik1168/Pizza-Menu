@@ -8,6 +8,7 @@ const cors = require('cors');
 const config = require('./config');
 const docs = require('./config/swagger');
 const swaggerSpec = docs();
+const tokenMiddleware = require('./middlewares/token.middleware');
 
 
 // routes
@@ -32,9 +33,12 @@ app.get('/swagger.json', function (req, res) {
     res.send(swaggerSpec);
 });
 
+// Middleware
+
 
 //API
 app.use('/', indexRouter);
+app.use(tokenMiddleware.middleware);
 app.use('/pizza', pizzaRoute);
 
 
