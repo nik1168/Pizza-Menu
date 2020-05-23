@@ -43,7 +43,55 @@ describe('Tests for pizza component', function () {
             .post('/pizza')
             .set('X-API-Key', 'root')
             .send({
-                name: 'Carnivora'
+                name: 'Carnivora',
+                toppings: [{
+                    id: 3
+                }]
+            })
+            .end(function (err, res) {
+                res.should.have.status(200);
+                done();
+            })
+
+    });
+
+    it('should add toppings to a pizza', function (done) {
+        chai.request(reqServer)
+            .post('/pizza/2/toppings')
+            .set('X-API-Key', 'root')
+            .send({
+                toppings: [
+                    {
+                        id: 6
+                    },
+                    {
+                        id: 7
+                    },
+                    {
+                        id: 8
+                    }
+                ]
+            })
+            .end(function (err, res) {
+                res.should.have.status(200);
+                done();
+            })
+
+    });
+
+    it('should remove toppings from a pizza', function (done) {
+        chai.request(reqServer)
+            .delete('/pizza/2/toppings')
+            .set('X-API-Key', 'root')
+            .send({
+                toppings: [
+                    {
+                        id: 6
+                    },
+                    {
+                        id: 7
+                    }
+                ]
             })
             .end(function (err, res) {
                 res.should.have.status(200);

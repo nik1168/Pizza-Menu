@@ -1,6 +1,7 @@
 'use strict';
 const DataTypes = require('sequelize');
 const sequelize = require('../../config/sequelize').db;
+const PizzaTopping = require('../pizza_topping/pizza_topping.model').pizzaTopping;
 
 const Topping = sequelize.define('topping', {
     id: {
@@ -30,7 +31,11 @@ const Topping = sequelize.define('topping', {
                 .then(onSuccess).catch(onError);
         },
         removeById: function (topping_id, onSuccess, onError) {
-            Topping.destroy({where: {id: topping_id}}).then(onSuccess).catch(onError);
+            PizzaTopping.destroy({where: {topping_id: topping_id}}).then((topping) => {
+                if (topping) {
+                    Topping.destroy({where: {id: topping_id}}).then(onSuccess).catch(onError);
+                }
+            }).catch(onError);
         },
     }
 });

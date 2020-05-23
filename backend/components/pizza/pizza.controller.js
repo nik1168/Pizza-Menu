@@ -10,14 +10,21 @@ const PizzaTopping = require('../pizza_topping/pizza_topping.model').pizzaToppin
  * @param res
  */
 module.exports.create = function (req, res) {
-
     const pizza = Pizza.build(initPizza(req.body));
     pizza.add(function (success) {
             const pizza = success.dataValues;
-            res.json({
-                message: 'Pizza created!',
-                data: pizza
-            });
+            const toppings = req.body.toppings || [];
+            const result = toppings.map((topping) => ({pizza_id: pizza.id, topping_id: topping.id}));
+            addToppings(result)
+                .then((pizza) => {
+                    res.json({
+                        message: 'Toppings added!',
+                        data: pizza
+                    });
+                })
+                .catch((error) => {
+                    res.status(500).send("Error removing pizza");
+                });
         },
         function (error) {
             res.status(500).send("Error creating pizza");
@@ -36,11 +43,10 @@ module.exports.getAll = function (req, res) {
             as: 'toppings',
             required: false,
             // Pass in the Product attributes that you want to retrieve
-            attributes: ['name'],
+            attributes: ['id', 'name'],
             through: {
                 model: PizzaTopping,
-                as: 'toppings',
-                attributes: ['name'],
+                attributes: [],
             }
         }]
     }).then((pizzas) => {
@@ -55,6 +61,40 @@ module.exports.getAll = function (req, res) {
 
     }).catch((error) => {
         res.status(500).send("Error getting pizzas");
+    });
+};
+
+/**
+ * Get all toppings for a specific pizza
+ * @param req
+ * @param res
+ */
+module.exports.getToppings = function (req, res) {
+    Pizza.find({
+        where: {id: req.params.pizza_id},
+        include: [{
+            model: Topping,
+            as: 'toppings',
+            required: false,
+            attributes: ['id', 'name'],
+            through: {
+                model: PizzaTopping,
+                attributes: [],
+            }
+        }]
+    }).then(function (success) {
+        const pizza = success.dataValues;
+        if (success && success.dataValues) {
+            res.json({
+                message: "success",
+                data: pizza
+            });
+        } else {
+            res.status(404).send("Pizza not found");
+        }
+
+    }).catch((error) => {
+        res.status(500).send("Error getting toppings for pizza");
     });
 };
 
@@ -98,10 +138,8 @@ module.exports.getById = function (req, res) {
             })
         } else {
             res.status(404).send("No pizza found");
-            console.log("no pizza")
         }
     }, (error) => {
-        console.log(error);
         res.status(500).send("Error getting pizza");
     });
 };
@@ -122,9 +160,89 @@ module.exports.delete = function (req, res) {
             res.status(404).send("pizza not found");
         }
     }, (error) => {
-        console.log(error);
         res.status(500).send("Error removing pizza");
     });
+};
+
+/**
+ * Adds toppings to a Pizza
+ * @param req
+ * @param res
+ */
+module.exports.addToppingToPizza = function (req, res) {
+
+    const pizzaId = req.params.pizza_id;
+    const toppings = req.body.toppings;
+    const result = toppings.map((topping) => ({pizza_id: pizzaId, topping_id: topping.id}));
+    addToppings(result)
+        .then((pizza) => {
+            res.json({
+                message: 'Toppings added!',
+                data: pizza
+            });
+        })
+        .catch((error) => {
+            res.status(500).send("Error removing pizza");
+        });
+
+};
+
+
+/**
+ * Removes toppings from a Pizza
+ * @param req
+ * @param res
+ */
+module.exports.removeToppingFromPizza = function (req, res) {
+
+    const pizzaId = req.params.pizza_id;
+    const toppings = req.body.toppings;
+    removeToppings(pizzaId, toppings)
+        .then((success) => {
+            res.json({
+                message: 'Toppings removed!',
+            });
+        })
+        .catch((error) => {
+            res.status(500).send("Error removing toppings from pizza");
+        });
+
+};
+
+/**
+ * Adds toppings to a pizza
+ * @param pizzaToppings
+ * @returns {Promise<unknown>}
+ */
+const addToppings = (pizzaToppings) => {
+    return new Promise((resolve, reject) => {
+        PizzaTopping.bulkCreate(pizzaToppings).then((success) => {
+            const pizza = success.dataValues;
+            resolve(pizza);
+        }).catch((error) => {
+            reject(error);
+        });
+    });
+
+};
+
+/**
+ * Remove toppings from a pizza
+ * @param pizzaId
+ * @param toppings
+ * @returns {Promise<unknown>}
+ */
+const removeToppings = (pizzaId, toppings) => {
+    return new Promise((resolve, reject) => {
+        PizzaTopping.destroy({where: {topping_id: toppings.map(topping => topping.id), pizza_id: pizzaId}})
+            .then((success) => {
+                resolve()
+            })
+            .catch((error) => {
+                reject(error);
+            });
+    });
+
 };
 
 

@@ -31,7 +31,12 @@ const Pizza = sequelize.define('pizza', {
                 .then(onSuccess).catch(onError);
         },
         removeById: function (pizza_id, onSuccess, onError) {
-            Pizza.destroy({where: {id: pizza_id}}).then(onSuccess).catch(onError);
+            PizzaTopping.destroy({where: {pizza_id: pizza_id}}).then((pizza)=>{
+                if(pizza){
+                    Pizza.destroy({where: {id: pizza_id}}).then(onSuccess).catch(onError);
+                }
+            }).catch(onError)
+
         },
     }
 });

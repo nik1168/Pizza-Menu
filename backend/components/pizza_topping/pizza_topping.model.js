@@ -5,6 +5,11 @@ const Pizza = require('../pizza/pizza.model').pizza;
 const Topping = require('../topping/topping.model').topping;
 
 const PizzaTopping = sequelize.define('pizza_has_topping', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     pizza_id: {
         type: DataTypes.INTEGER,
         references: {

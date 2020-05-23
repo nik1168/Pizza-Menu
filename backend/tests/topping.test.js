@@ -68,7 +68,7 @@ describe('Tests for topping component', function () {
 
     it('should delete a topping by id', function (done) {
         chai.request(reqServer)
-            .delete('/topping/1')
+            .delete('/topping/5')
             .set('X-API-Key', 'root')
             .end(function (err, res) {
                 res.should.have.status(200);
