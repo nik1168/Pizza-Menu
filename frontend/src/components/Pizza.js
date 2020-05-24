@@ -30,7 +30,7 @@ const styles = theme => ({
 });
 
 function Pizza(props) {
-    const {classes, data} = props;
+    const {classes, data, onAddDeleteTopping} = props;
     const {toppings} = data;
     const displayToppings = toppings.map(topping => topping.name + " ");
 
@@ -51,14 +51,11 @@ function Pizza(props) {
                     </Typography>
                 </CardContent>
                 <CardActions>
-                    <Button size="small" color="primary">
-                        View
+                    <Button size="small" color="primary" onClick={() => onAddDeleteTopping(data.id, data.toppings, false)}>
+                        Add topping
                     </Button>
-                    <Button size="small" color="primary">
-                        Edit
-                    </Button>
-                    <Button size="small" color="primary">
-                        Delete
+                    <Button size="small" color="primary" onClick={() => onAddDeleteTopping(data.id, data.toppings, true)}>
+                        Delete topping
                     </Button>
                 </CardActions>
             </Card>
