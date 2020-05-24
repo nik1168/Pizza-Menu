@@ -31,6 +31,8 @@ const styles = theme => ({
 
 function Pizza(props) {
     const {classes, data} = props;
+    const {toppings} = data;
+    const displayToppings = toppings.map(topping => topping.name + " ");
 
     return (
         <Grid item key={data.id} xs={12} sm={6} md={4}>
@@ -45,7 +47,7 @@ function Pizza(props) {
                         {data.name}
                     </Typography>
                     <Typography>
-                        This is a media card. You can use this section to describe the content.
+                        {displayToppings}
                     </Typography>
                 </CardContent>
                 <CardActions>
