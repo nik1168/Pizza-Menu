@@ -123,11 +123,17 @@ class Main extends Component {
                     </Container>
 
                     <Container className={classes.cardGrid} maxWidth="md">
-                        <Grid container spacing={4}>
-                            {pizzas.map((pizza) => (
-                                <Pizza data={pizza}/>
-                            ))}
-                        </Grid>
+                        {
+                            pizzas.length > 0 ?
+                                <Grid container spacing={4}>
+                                {pizzas.map((pizza) => (
+                                    <Pizza data={pizza}/>
+                                ))}
+                                </Grid>
+                                :
+                                <Typography> No pizzas found, try and add one!</Typography>
+                        }
+
                     </Container>
 
                 </div>
