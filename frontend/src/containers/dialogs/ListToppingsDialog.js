@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Link, withRouter} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import withStyles from '@material-ui/styles/withStyles';
 import Button from '@material-ui/core/Button';
 import {connect} from "react-redux";
@@ -13,6 +13,9 @@ import * as toppingActions from "../../actions/topping";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import ListToppings from "../../components/ListToppings";
 import {TRASH_ACTION} from "../../utils/constants";
+import TextField from "@material-ui/core/TextField/TextField";
+import IconButton from "@material-ui/core/IconButton";
+import AddIcon from '@material-ui/icons/Add';
 
 const styles = theme => ({
     container: {
@@ -40,20 +43,42 @@ const styles = theme => ({
 
 class ListToppingsDialog extends Component {
 
-
+    /**
+     * Local state
+     * @type {{toppingName: string}}
+     */
     state = {
-        addNewTopping: false
+        toppingName: ""
     };
 
+    /**
+     * Close button of dialog
+     */
     handleClose = () => {
         this.props.onClose(this.props.identifier)
     };
 
+    /**
+     * Ok button of dialog
+     */
     handleAccept = () => {
-        const toppings = this.state.checkedValues.map(val => ({id: val}));
-        this.props.onAccept(toppings)
+        this.props.onClose(this.props.identifier)
     };
 
+    /**
+     * Updates the name of the topping
+     * @param name
+     */
+    handleTextFieldChange = (name) => {
+        this.setState(state => ({
+            toppingName: name
+        }));
+    };
+
+    /**
+     * Deletes a topping
+     * @param toppingId
+     */
     handleClick = (toppingId) => {
         this.props.fetchDeleteTopping(toppingId, () => {
             this.props.fetchToppings();
@@ -62,8 +87,25 @@ class ListToppingsDialog extends Component {
 
     };
 
+    /**
+     * Adds a topping
+     */
+    addTopping = () => {
+        this.props.fetchAddTopping({name: this.state.toppingName}, () => {
+            this.props.fetchToppings();
+            this.setState(state => ({
+                toppingName: ""
+            }));
+        });
+    };
+
     render() {
         const {classes, title, open, onClose, toppings, isFetchingToppings, clickToppings} = this.props;
+        const AddButton = (props) => (
+            <IconButton>
+                <AddIcon onClick={props.onAdd}/>
+            </IconButton>
+        );
         return (
             <Dialog
                 disableBackdropClick
@@ -80,6 +122,15 @@ class ListToppingsDialog extends Component {
                 <DialogContent>
                     <DialogContentText>
                     </DialogContentText>
+                    <TextField
+                        autoFocus
+                        label="Add new Topping"
+                        value={this.state.toppingName}
+                        fullWidth
+                        InputProps={{endAdornment: <AddButton onAdd={this.addTopping}/>}}
+                        onChange={(event) => this.handleTextFieldChange(event.target.value)}
+                    />
+
                     {
                         !isFetchingToppings ?
                             <ListToppings

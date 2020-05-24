@@ -24,16 +24,18 @@ export const requestToppings = () => ({
  * Request to add a topping
  * @returns {{type: *}}
  */
-export const requestAddToppings = () => ({
-    type: REQUEST_ADD_TOPPING
+export const requestAddToppings = (topping) => ({
+    type: REQUEST_ADD_TOPPING,
+    topping
 });
 
 /**
  * Request to delete a topping
  * @returns {{type: *}}
  */
-export const requestDeleteToppings = () => ({
-    type: REQUEST_DELETE_TOPPING
+export const requestDeleteToppings = (toppingId) => ({
+    type: REQUEST_DELETE_TOPPING,
+    toppingId
 });
 
 
@@ -121,11 +123,14 @@ export const fetchToppings = () => (dispatch, getState) => {
  * Action creator to add a topping
  * @returns {function(*, *): Promise<unknown>}
  */
-export const fetchAddTopping = (topping) => (dispatch, getState) => {
+export const fetchAddTopping = (topping, successCb) => (dispatch, getState) => {
     dispatch(requestAddToppings(topping));
     return addTopping(topping)
         .then(toppings => {
             dispatch(successAddTopping(topping));
+            if (successCb) {
+                successCb()
+            }
 
         })
         .catch(error => {
@@ -142,7 +147,7 @@ export const fetchDeleteTopping = (toppingId, successCb) => (dispatch, getState)
     return deleteTopping(toppingId)
         .then(toppings => {
             dispatch(successDeleteTopping(toppings));
-            if(successCb){
+            if (successCb) {
                 successCb()
             }
         })
