@@ -78,6 +78,8 @@ To generate a build ready for production just run:
  ```bash
  npm run build
  ```
-
+#### Why these frameworks were chosen?
+Check this
+[link](Technologies Used.md)
 ## Author
 [Niklaus Geisser](https://github.com/nik1168)
