@@ -57,6 +57,9 @@ function Pizza(props) {
                     <Button size="small" color="primary">
                         Edit
                     </Button>
+                    <Button size="small" color="primary">
+                        Delete
+                    </Button>
                 </CardActions>
             </Card>
         </Grid>

@@ -12,6 +12,7 @@ import * as pizzaActions from "../actions/pizza";
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import Pizza from "../components/Pizza";
+import AddPizzaDialog from "./dialogs/AddPizzaDialog";
 
 
 const styles = theme => ({
@@ -93,12 +94,21 @@ const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 class Main extends Component {
 
 
-    state = {};
+    state = {
+        showAddPizzaDialog: false
+    };
 
     componentDidMount() {
-        console.log("Component mounted");
         this.props.fetchPizzas();
     }
+
+    dialogClose = (event) => {
+        this.setState({showAddPizzaDialog: false});
+    };
+
+    openAddPizzaDialog = (event) => {
+        this.setState({showAddPizzaDialog: true});
+    };
 
     render() {
         const {classes, pizzas} = this.props;
@@ -114,7 +124,10 @@ class Main extends Component {
                         <div className={classes.heroButtons}>
                             <Grid container spacing={2} justify="left">
                                 <Grid item>
-                                    <Button variant="contained" color="primary">
+                                    <Button
+                                        onClick={this.openAddPizzaDialog}
+                                        variant="contained"
+                                        color="primary">
                                         Add a new pizza!
                                     </Button>
                                 </Grid>
@@ -126,15 +139,19 @@ class Main extends Component {
                         {
                             pizzas.length > 0 ?
                                 <Grid container spacing={4}>
-                                {pizzas.map((pizza) => (
-                                    <Pizza data={pizza}/>
-                                ))}
+                                    {pizzas.map((pizza) => (
+                                        <Pizza data={pizza}/>
+                                    ))}
                                 </Grid>
                                 :
                                 <Typography> No pizzas found, try and add one!</Typography>
                         }
 
                     </Container>
+                    <AddPizzaDialog
+                        open={this.state.showAddPizzaDialog}
+                        onClose={this.dialogClose}
+                    />
 
                 </div>
 
