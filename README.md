@@ -1,7 +1,7 @@
 # Pizza-Menu
 Application that manages a Pizza Menu using NodeJS, Express, React and Redux.
 
-##Getting started 
+## Getting started 
 ### Install dependencies 
 #### Backend 
 Get into the backend directory
@@ -41,7 +41,7 @@ Install all necessary dependencies for the UI
 npm install
 ```
 
-##Run
+## Run
 ### Backend 
 Just get into the backend directory and run
 ```bash
