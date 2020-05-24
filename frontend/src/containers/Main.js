@@ -14,6 +14,8 @@ import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import Pizza from "../components/Pizza";
 import AddPizzaDialog from "./dialogs/AddPizzaDialog";
+import ListToppingsDialog from "./dialogs/ListToppingsDialog";
+import ToppingsPizzaDialog from "./dialogs/ToppingsPizzaDialog";
 
 
 const styles = theme => ({
@@ -94,33 +96,123 @@ class Main extends Component {
 
 
     state = {
-        showAddPizzaDialog: false
+        showAddPizzaDialog: false,
+        showAddToppingToPizzaDialog: false,
+        showDeleteToppingFromPizzaDialog: false,
+        showToppingsDialog: false,
+        showDeleteToppingsDialog: false,
+        selectedPizza: 0,
+        toppingsInPizza: [],
+        deleteToppings: false
     };
 
     componentDidMount() {
         this.props.fetchPizzas();
     }
 
-    componentDidUpdate(prevProps,prevState) {
-        if(this.state.showAddPizzaDialog){
+    componentDidUpdate(prevProps, prevState) {
+        const {
+            showAddPizzaDialog,
+            showToppingsDialog,
+            showAddToppingToPizzaDialog,
+            showDeleteToppingFromPizzaDialog
+        } = this.state;
+
+        if (showAddPizzaDialog || showToppingsDialog || showAddToppingToPizzaDialog || showDeleteToppingFromPizzaDialog) {
             this.props.fetchToppings();
         }
     }
 
-    dialogClose = (event) => {
-        this.setState({showAddPizzaDialog: false});
+    /**
+     * Close dialog
+     */
+    dialogClose = () => {
+        this.props.fetchPizzas();
+        this.setState(
+            {
+                showAddPizzaDialog: false,
+                showToppingsDialog: false,
+                showAddToppingToPizzaDialog: false,
+                showDeleteToppingFromPizzaDialog: false
+            });
     };
 
+    /**
+     * Creates pizza
+     * @param pizzaTopping
+     */
     createPizza = (pizzaTopping) => {
-        this.setState({showAddPizzaDialog: false});
+        this.props.fetchAddPizza(pizzaTopping, () => {
+            this.props.fetchPizzas();
+            this.setState({showAddPizzaDialog: false});
+        });
+
     };
 
-    openAddPizzaDialog = (event) => {
+
+    /**
+     * Adds or Deletes toppings to a pizza
+     * @param toppings
+     */
+    addDeleteToppingsToPizza = (toppings) => {
+        const {selectedPizza, showDeleteToppingFromPizzaDialog} = this.state;
+        this.props.fetchAddDeleteToppingsToPizza(selectedPizza, toppings, showDeleteToppingFromPizzaDialog, () => {
+            this.props.fetchPizzas();
+            this.setState(
+                {
+                    showAddToppingToPizzaDialog: false,
+                    showDeleteToppingFromPizzaDialog: false,
+                })
+        });
+
+
+    };
+
+
+    /**
+     * Opens dialog to create a pizza
+     */
+    openAddPizzaDialog = () => {
         this.setState({showAddPizzaDialog: true});
     };
 
+    /**
+     * Opens dialog to create a pizza
+     */
+    openDialogs = (dialogId) => {
+
+        switch (dialogId) {
+            case 1:
+                this.setState({showAddPizzaDialog: true});
+                break;
+            case 2:
+                this.setState({showToppingsDialog: true});
+                break;
+
+        }
+
+    };
+
+    handleAddDeleteToppingToPizza = (idPizza, toppings, deleteToppings) => {
+        this.setState(
+            {
+                toppingsInPizza: toppings,
+                selectedPizza: idPizza,
+                showAddToppingToPizzaDialog: !deleteToppings,
+                showDeleteToppingFromPizzaDialog: deleteToppings,
+            })
+    };
+
+
+    /**
+     * Opens dialog to list toppings
+     */
+    openListToppingsDialog = () => {
+        this.setState({showToppingsDialog: true});
+    };
+
     render() {
-        const {classes, pizzas} = this.props;
+        const {classes, pizzas, toppings, isFetchingToppings} = this.props;
 
         return (
             <React.Fragment>
@@ -134,12 +226,22 @@ class Main extends Component {
                             <Grid container spacing={2} justify="left">
                                 <Grid item>
                                     <Button
-                                        onClick={this.openAddPizzaDialog}
+                                        onClick={() => this.openDialogs(1)}
                                         variant="contained"
                                         color="primary">
                                         Add a new pizza!
                                     </Button>
                                 </Grid>
+
+                                <Grid item>
+                                    <Button
+                                        onClick={() => this.openDialogs(2)}
+                                        variant="contained"
+                                        color="primary">
+                                        Toppings
+                                    </Button>
+                                </Grid>
+
                             </Grid>
                         </div>
                     </Container>
@@ -149,7 +251,7 @@ class Main extends Component {
                             pizzas.length > 0 ?
                                 <Grid container spacing={4}>
                                     {pizzas.map((pizza) => (
-                                        <Pizza data={pizza}/>
+                                        <Pizza data={pizza} onAddDeleteTopping={this.handleAddDeleteToppingToPizza}/>
                                     ))}
                                 </Grid>
                                 :
@@ -157,11 +259,43 @@ class Main extends Component {
                         }
 
                     </Container>
-                    <AddPizzaDialog
-                        open={this.state.showAddPizzaDialog}
-                        onClose={this.dialogClose}
-                        onAcceptCreate={this.createPizza}
-                    />
+
+                    <div id={"dialogs"}>
+                        <AddPizzaDialog
+                            open={this.state.showAddPizzaDialog}
+                            onClose={this.dialogClose}
+                            onAcceptCreate={this.createPizza}
+                        />
+                        <ListToppingsDialog
+                            open={this.state.showToppingsDialog}
+                            clickToppings={true}
+                            deleteToppingsInPizza={this.state.toppingsInPizza}
+                            onClose={this.dialogClose}
+                            onAccept={this.dialogClose}
+                            title={"List of available toppings"}
+                        />
+
+                        <ToppingsPizzaDialog
+                            open={this.state.showAddToppingToPizzaDialog}
+                            clickToppings={true}
+                            deleteToppingsInPizza={false}
+                            toppingsInPizza={this.state.toppingsInPizza.map((topping => topping.id))}
+                            onClose={this.dialogClose}
+                            onAccept={this.addDeleteToppingsToPizza}
+                            title={"Add toppings to Pizza"}
+                        />
+
+                        <ToppingsPizzaDialog
+                            open={this.state.showDeleteToppingFromPizzaDialog}
+                            clickToppings={true}
+                            deleteToppingsInPizza={true}
+                            toppingsInPizza={this.state.toppingsInPizza.map((topping => topping.id))}
+                            onClose={this.dialogClose}
+                            onAccept={this.addDeleteToppingsToPizza}
+                            title={"Select toppings to delete from pizza"}
+                        />
+
+                    </div>
 
                 </div>
 
@@ -177,7 +311,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({...pizzaActions,...toppingActions}, dispatch)
+    return bindActionCreators({...pizzaActions, ...toppingActions}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(Main)))
