@@ -12,14 +12,14 @@ const PizzaTopping = require('../pizza_topping/pizza_topping.model').pizzaToppin
 module.exports.create = function (req, res) {
     const pizza = Pizza.build(initPizza(req.body));
     pizza.add(function (success) {
-            const pizza = success.dataValues;
+            const newPizza = success.dataValues;
             const toppings = req.body.toppings || [];
-            const result = toppings.map((topping) => ({pizza_id: pizza.id, topping_id: topping.id}));
+            const result = toppings.map((topping) => ({pizza_id: newPizza.id, topping_id: topping.id}));
             addToppings(result)
                 .then((pizza) => {
                     res.json({
-                        message: 'Toppings added!',
-                        data: pizza
+                        message: 'Pizza added!',
+                        data: newPizza
                     });
                 })
                 .catch((error) => {
