@@ -7,18 +7,18 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import {connect} from 'react-redux'
 import Topbar from './Topbar';
-import {Bar, BarChart, CartesianGrid, Legend, Line, LineChart, Pie, PieChart, Tooltip, XAxis, YAxis,} from 'recharts';
 import {bindActionCreators} from "redux";
 import * as pizzaActions from "../actions/pizza";
+import Container from '@material-ui/core/Container';
+import Button from '@material-ui/core/Button';
+import Pizza from "../components/Pizza";
 
-const backgroundShape = require('../images/shape.svg');
 
 const styles = theme => ({
     root: {
         flexGrow: 1,
         backgroundColor: theme.palette.grey['100'],
         overflow: 'hidden',
-        background: `url(${backgroundShape}) no-repeat`,
         backgroundSize: 'cover',
         backgroundPosition: '0 400px',
         paddingBottom: 200
@@ -78,30 +78,59 @@ const styles = theme => ({
         position: 'absolute',
         top: '40%',
         left: '40%'
+    },
+    cardGrid: {
+        paddingTop: theme.spacing(8),
+        paddingBottom: theme.spacing(8),
+    },
+    heroButtons: {
+        marginTop: theme.spacing(4),
     }
 });
 
+const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
 class Main extends Component {
+
 
     state = {};
 
     componentDidMount() {
         console.log("Component mounted");
+        this.props.fetchPizzas();
     }
 
     render() {
-        const {classes, distance, duration, amount} = this.props;
+        const {classes, pizzas} = this.props;
 
         return (
             <React.Fragment>
                 <CssBaseline/>
                 <Topbar/>
-                <div className={classes.root}>
-                    <Grid container justify="center">
-                        UI for Pizzas
-                    </Grid>
-                </div>
 
+                <div className={classes.root}>
+
+                    <Container maxWidth="sm">
+                        <div className={classes.heroButtons}>
+                            <Grid container spacing={2} justify="left">
+                                <Grid item>
+                                    <Button variant="contained" color="primary">
+                                        Add a new pizza!
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </div>
+                    </Container>
+
+                    <Container className={classes.cardGrid} maxWidth="md">
+                        <Grid container spacing={4}>
+                            {pizzas.map((pizza) => (
+                                <Pizza data={pizza}/>
+                            ))}
+                        </Grid>
+                    </Container>
+
+                </div>
 
             </React.Fragment>
         )
@@ -109,7 +138,9 @@ class Main extends Component {
 }
 
 function mapStateToProps(state) {
-    return {}
+    return {
+        pizzas: state.pizza.pizzas
+    }
 }
 
 function mapDispatchToProps(dispatch) {
