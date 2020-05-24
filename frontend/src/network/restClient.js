@@ -94,8 +94,8 @@ export const addTopping = (topping) => {
 };
 
 /**
- * deletes a topping
- * @param topping
+ * Deletes a topping
+ * @param toppingId
  * @returns {Promise<unknown>}
  */
 export const deleteTopping = (toppingId) => {

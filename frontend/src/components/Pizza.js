@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React from "react";
 import Card from "@material-ui/core/Card/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";

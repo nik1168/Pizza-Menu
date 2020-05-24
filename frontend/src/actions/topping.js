@@ -1,4 +1,4 @@
-import {addTopping, deleteTopping, getPizzas, getToppings} from "../network/restClient";
+import {addTopping, deleteTopping, getToppings} from "../network/restClient";
 
 export const SUCCESS_TOPPINGS = 'SUCCESS_TOPPINGS';
 export const ERROR_TOPPINGS = 'ERROR_TOPPINGS';
