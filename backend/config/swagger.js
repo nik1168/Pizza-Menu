@@ -26,6 +26,8 @@ module.exports = function () {
         apis: [
             'backend/components/pizza/pizza.route.js',
             'backend/components/topping/topping.route.js',
+            './components/pizza/pizza.route.js',
+            './components/topping/topping.route.js',
         ]
     };
 
