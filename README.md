@@ -1,5 +1,5 @@
 # Pizza-Menu
-Application that manages a Pizza Menu using NodeJS, React and Redux.
+Application that manages a Pizza Menu using NodeJS, Express, React and Redux.
 
 ##Getting started 
 ### Install dependencies 
