@@ -31,11 +31,11 @@ const Topping = sequelize.define('topping', {
                 .then(onSuccess).catch(onError);
         },
         removeById: function (topping_id, onSuccess, onError) {
-            PizzaTopping.destroy({where: {topping_id: topping_id}}).then((topping) => {
-                if (topping) {
+            PizzaTopping.destroy({where: {topping_id: topping_id}})
+                .then(() => {
                     Topping.destroy({where: {id: topping_id}}).then(onSuccess).catch(onError);
-                }
-            }).catch(onError);
+
+                }).catch(onError);
         },
     }
 });
