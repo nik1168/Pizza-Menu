@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Link, withRouter} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import withStyles from '@material-ui/styles/withStyles';
 import Button from '@material-ui/core/Button';
 import {connect} from "react-redux";
@@ -9,14 +9,11 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import Dialog from "@material-ui/core/Dialog/Dialog";
 import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
-import Checkbox from "@material-ui/core/Checkbox";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import List from "@material-ui/core/List";
 import {bindActionCreators} from "redux";
 import * as toppingActions from "../../actions/topping";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import ListToppings from "../../components/ListToppings";
+import {CHECK_ACTION} from "../../utils/constants";
 
 const styles = theme => ({
     container: {
@@ -51,13 +48,13 @@ class AddPizzaDialog extends Component {
         pizzaName: ""
     };
 
-    handleCheck(e, x) {
+    handleClick = (e, x) => {
         this.setState(state => ({
             checkedValues: state.checkedValues.includes(x)
                 ? state.checkedValues.filter(c => c !== x)
                 : [...state.checkedValues, x]
         }));
-    }
+    };
 
     handleTextFieldChange = (name) => {
         this.setState(state => ({
@@ -82,7 +79,7 @@ class AddPizzaDialog extends Component {
 
 
     render() {
-        const {classes, open, onClose, toppings, isFetchingToppings} = this.props;
+        const {classes, open, onClose, toppings, isFetchingToppings, clickToppings} = this.props;
 
         return (
             <Dialog
@@ -109,21 +106,13 @@ class AddPizzaDialog extends Component {
                         fullWidth
                     />
                     {
-                        !isFetchingToppings ? toppings.map((topping, index) =>
-                                <List>
-                                    <ListItem key={index} button>
-                                        <ListItemText id={index} primary={topping.name}/>
-                                        <ListItemSecondaryAction>
-                                            <Checkbox
-                                                key={index}
-                                                label={topping.name}
-                                                onChange={e => this.handleCheck(e, topping.id)}
-                                                checked={this.state.checkedValues.includes(topping.id)}
-                                            />
-                                        </ListItemSecondaryAction>
-                                    </ListItem>
-                                </List>
-                            ) :
+                        !isFetchingToppings ?
+                            <ListToppings
+                                toppings={toppings}
+                                handleClick={this.handleClick}
+                                iconAction={CHECK_ACTION}
+                                checkedValues={this.state.checkedValues}/>
+                            :
                             <CircularProgress/>
                     }
                 </DialogContent>
