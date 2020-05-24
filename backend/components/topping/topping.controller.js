@@ -83,10 +83,8 @@ module.exports.getById = function (req, res) {
             })
         } else {
             res.status(404).send("No topping found");
-            console.log("no topping")
         }
     }, (error) => {
-        console.log(error);
         res.status(500).send("Error getting topping");
     });
 };

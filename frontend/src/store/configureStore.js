@@ -7,7 +7,6 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const logger = createLogger({
     collapsed: true
-    // ...options
 });
 const configureStore = preloadedState => createStore(
     rootReducer,
