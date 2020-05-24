@@ -14,6 +14,9 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import List from "@material-ui/core/List";
+import {bindActionCreators} from "redux";
+import * as toppingActions from "../../actions/topping";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const styles = theme => ({
     container: {
@@ -38,22 +41,6 @@ const styles = theme => ({
         textAlign: 'right'
     }
 });
-const options = [
-    'None',
-    'Atria',
-    'Callisto',
-    'Dione',
-    'Ganymede',
-    'Hangouts Call',
-    'Luna',
-    'Oberon',
-    'Phobos',
-    'Pyxis',
-    'Sedna',
-    'Titania',
-    'Triton',
-    'Umbriel',
-];
 
 class AddPizzaDialog extends Component {
 
@@ -61,10 +48,10 @@ class AddPizzaDialog extends Component {
     state = {
         activeStep: 0,
         checkedValues: [],
-        data: ["apple", "kiwi", "banana", "lime", "orange", "grape"]
+        pizzaName: ""
     };
 
-    handleCheck(e,x) {
+    handleCheck(e, x) {
         this.setState(state => ({
             checkedValues: state.checkedValues.includes(x)
                 ? state.checkedValues.filter(c => c !== x)
@@ -72,14 +59,30 @@ class AddPizzaDialog extends Component {
         }));
     }
 
+    handleTextFieldChange = (name) => {
+        this.setState(state => ({
+            pizzaName: name
+        }));
+    };
+
     handleClose = () => {
         this.props.onClose(this.props.identifier)
     };
 
+    createPizza = () => {
+        const toppings = this.state.checkedValues.map(val => ({id: val}));
+        const name = this.state.pizzaName;
+        const pizzaTopping = {
+            name,
+            toppings
+        };
+
+        this.props.onAcceptCreate(pizzaTopping)
+    };
 
 
     render() {
-        const {classes, open, onClose} = this.props;
+        const {classes, open, onClose, toppings, isFetchingToppings} = this.props;
 
         return (
             <Dialog
@@ -100,34 +103,35 @@ class AddPizzaDialog extends Component {
                     <TextField
                         autoFocus
                         margin="dense"
-                        id="name"
                         label="name"
+                        value={this.state.pizzaName}
+                        onChange={(event) => this.handleTextFieldChange(event.target.value)}
                         fullWidth
                     />
                     {
-                        this.state.data.map((x, index) =>
-                            <List>
-                                <ListItem key={index} button>
-                                    <ListItemText id={index} primary={x}/>
-                                    <ListItemSecondaryAction>
-                                        <Checkbox
-                                            key={index}
-                                            label={x}
-                                            onChange={e => this.handleCheck(e,x)}
-                                            checked={this.state.checkedValues.includes(x)}
-                                        />
-                                    </ListItemSecondaryAction>
-                                </ListItem>
-                            </List>
-
-                        )
+                        !isFetchingToppings ? toppings.map((topping, index) =>
+                                <List>
+                                    <ListItem key={index} button>
+                                        <ListItemText id={index} primary={topping.name}/>
+                                        <ListItemSecondaryAction>
+                                            <Checkbox
+                                                key={index}
+                                                label={topping.name}
+                                                onChange={e => this.handleCheck(e, topping.id)}
+                                                checked={this.state.checkedValues.includes(topping.id)}
+                                            />
+                                        </ListItemSecondaryAction>
+                                    </ListItem>
+                                </List>
+                            ) :
+                            <CircularProgress/>
                     }
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={onClose} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={onClose} color="primary">
+                    <Button onClick={this.createPizza} color="primary">
                         Ok
                     </Button>
                 </DialogActions>
@@ -139,8 +143,13 @@ class AddPizzaDialog extends Component {
 
 function mapStateToProps(state) {
     return {
-        holes: [],
+        toppings: state.topping.toppings,
+        isFetchingToppings: state.topping.isFetchingToppings
     }
 }
 
-export default connect(mapStateToProps)(withRouter(withStyles(styles)(AddPizzaDialog)))
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({...toppingActions}, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(AddPizzaDialog)))

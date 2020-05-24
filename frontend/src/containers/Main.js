@@ -9,6 +9,7 @@ import {connect} from 'react-redux'
 import Topbar from './Topbar';
 import {bindActionCreators} from "redux";
 import * as pizzaActions from "../actions/pizza";
+import * as toppingActions from "../actions/topping";
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import Pizza from "../components/Pizza";
@@ -89,8 +90,6 @@ const styles = theme => ({
     }
 });
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
 class Main extends Component {
 
 
@@ -102,7 +101,17 @@ class Main extends Component {
         this.props.fetchPizzas();
     }
 
+    componentDidUpdate(prevProps,prevState) {
+        if(this.state.showAddPizzaDialog){
+            this.props.fetchToppings();
+        }
+    }
+
     dialogClose = (event) => {
+        this.setState({showAddPizzaDialog: false});
+    };
+
+    createPizza = (pizzaTopping) => {
         this.setState({showAddPizzaDialog: false});
     };
 
@@ -151,6 +160,7 @@ class Main extends Component {
                     <AddPizzaDialog
                         open={this.state.showAddPizzaDialog}
                         onClose={this.dialogClose}
+                        onAcceptCreate={this.createPizza}
                     />
 
                 </div>
@@ -167,7 +177,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({...pizzaActions}, dispatch)
+    return bindActionCreators({...pizzaActions,...toppingActions}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(Main)))
