@@ -150,7 +150,11 @@ router.post('/', pizza.create);
  *         required: true
  *         type: array
  *         items:
- *          $ref: '#/definitions/Topping'
+ *          type: object
+ *          properties:
+ *            id:
+ *              type: integer
+ *              example: 4
  *     security:
  *        - api_key: []
  *     responses:
@@ -181,7 +185,11 @@ router.post('/:pizza_id/toppings', pizza.addToppingToPizza);
  *         required: true
  *         type: array
  *         items:
- *          $ref: '#/definitions/Topping'
+ *          type: object
+ *          properties:
+ *            id:
+ *              type: integer
+ *              example: 4
  *     security:
  *        - api_key: []
  *     responses:
