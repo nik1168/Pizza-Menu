@@ -140,10 +140,16 @@ class Main extends Component {
      * @param pizzaTopping
      */
     createPizza = (pizzaTopping) => {
-        this.props.fetchAddPizza(pizzaTopping, () => {
-            this.props.fetchPizzas();
-            this.setState({showAddPizzaDialog: false});
-        });
+        if(pizzaTopping.name.length > 0){
+            this.props.fetchAddPizza(pizzaTopping, () => {
+                this.props.fetchPizzas();
+                this.setState({showAddPizzaDialog: false});
+            });
+        }
+        else{
+            alert("Pizza name empty")
+        }
+
 
     };
 

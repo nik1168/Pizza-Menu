@@ -91,12 +91,18 @@ class ListToppingsDialog extends Component {
      * Adds a topping
      */
     addTopping = () => {
-        this.props.fetchAddTopping({name: this.state.toppingName}, () => {
-            this.props.fetchToppings();
-            this.setState(state => ({
-                toppingName: ""
-            }));
-        });
+        if(this.state.toppingName.length > 0){
+            this.props.fetchAddTopping({name: this.state.toppingName}, () => {
+                this.props.fetchToppings();
+                this.setState(state => ({
+                    toppingName: ""
+                }));
+            });
+        }
+        else{
+            alert("Topping name is empty!")
+        }
+
     };
 
     render() {
